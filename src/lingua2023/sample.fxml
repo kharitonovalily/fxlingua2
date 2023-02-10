@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane alignment="TOP_CENTER" hgap="10" prefHeight="500.0" prefWidth="1000.0" vgap="10" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lingua2023.Controller">
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="46.0" />
+      <RowConstraints maxHeight="36.400000000000006" minHeight="10.0" prefHeight="24.400000000000006" />
+      <RowConstraints maxHeight="25.400000000000006" minHeight="8.400000000000006" prefHeight="20.400000000000006" />
+      <RowConstraints maxHeight="25.400000000000006" minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints maxHeight="25.400000000000006" minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints maxHeight="25.400000000000006" minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="35.0" />
+      <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="35.0" />
+   </rowConstraints>
+   <columnConstraints>
+      <ColumnConstraints maxWidth="142.0" minWidth="10.0" prefWidth="97.4" />
+      <ColumnConstraints maxWidth="127.4" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints maxWidth="107.39999999999998" minWidth="10.0" prefWidth="100.4" />
+      <ColumnConstraints maxWidth="116.19999999999999" minWidth="10.0" prefWidth="105.0" />
+      <ColumnConstraints maxWidth="198.19999999999993" minWidth="10.0" prefWidth="109.39999999999998" />
+      <ColumnConstraints maxWidth="198.0" minWidth="10.0" prefWidth="138.39999999999998" />
+      <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints />
+   </columnConstraints>
+   <children>
+      <TextArea fx:id="areaU" editable="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0" promptText="Здесь появится текст, введенный для анализа." wrapText="true" GridPane.columnSpan="4" GridPane.rowIndex="1" GridPane.rowSpan="3">
+         <font>
+            <Font name="Times New Roman" size="19.0" />
+         </font></TextArea>
+      <Button fx:id="sendB" mnemonicParsing="false" onAction="#send" prefHeight="26.0" prefWidth="100.0" text="Отправить" GridPane.columnSpan="2" GridPane.rowIndex="7">
+         <font>
+            <Font name="Times New Roman" size="16.0" />
+         </font>
+      </Button>
+      <Button fx:id="startB" alignment="CENTER" ellipsisString="60" mnemonicParsing="false" onAction="#start" prefHeight="40.0" prefWidth="381.0" text="Начать анализ" textAlignment="CENTER" textOverrun="LEADING_WORD_ELLIPSIS" GridPane.columnSpan="4" GridPane.rowIndex="10" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="21.0" />
+         </font>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+         <effect>
+            <InnerShadow choke="0.02" height="1.0" offsetX="1.0" offsetY="1.0" radius="1.975" width="8.9" />
+         </effect>
+      </Button>
+      <TextArea fx:id="areaS" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="5">
+         <font>
+            <Font name="Times New Roman" size="15.0" />
+         </font></TextArea>
+      <ListView fx:id="resList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.rowSpan="5" />
+      <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#showRes" prefHeight="35.0" prefWidth="343.0" text="Результаты анализа" GridPane.columnIndex="5" GridPane.columnSpan="3" GridPane.rowIndex="10">
+         <font>
+            <Font name="Times New Roman" size="21.0" />
+         </font></Button>
+      <Button fx:id="info" mnemonicParsing="false" onAction="#info" prefHeight="26.0" prefWidth="289.0" text="Информация" GridPane.columnSpan="2">
+         <font>
+            <Font name="Times New Roman" size="17.0" />
+         </font></Button>
+      <BarChart fx:id="chartW" animated="false" barGap="10.0" legendVisible="false" prefHeight="272.0" prefWidth="583.0" GridPane.columnIndex="5" GridPane.columnSpan="6" GridPane.rowSpan="7">
+        <xAxis>
+          <CategoryAxis fx:id="catW" side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis fx:id="numW" side="LEFT" />
+        </yAxis>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </BarChart>
+      <Label fx:id="aboutWord" prefHeight="56.0" prefWidth="560.0" wrapText="true" GridPane.columnIndex="4" GridPane.columnSpan="5" GridPane.rowIndex="7" GridPane.rowSpan="2">
+         <font>
+            <Font name="Times New Roman" size="19.0" />
+         </font></Label>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</GridPane>
