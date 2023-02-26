@@ -67,7 +67,10 @@
       <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#showRes" prefHeight="35.0" prefWidth="343.0" text="Результаты анализа" GridPane.columnIndex="5" GridPane.columnSpan="3" GridPane.rowIndex="10">
          <font>
             <Font name="Times New Roman" size="21.0" />
-         </font></Button>
+         </font>
+         <effect>
+            <InnerShadow choke="0.02" height="5.0" offsetX="1.0" offsetY="1.0" radius="3.0" width="9.0" />
+         </effect></Button>
       <Button fx:id="info" mnemonicParsing="false" onAction="#info" prefHeight="26.0" prefWidth="289.0" text="Информация" GridPane.columnSpan="2">
          <font>
             <Font name="Times New Roman" size="17.0" />

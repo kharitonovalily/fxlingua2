@@ -2,6 +2,9 @@ package lingua2023;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
@@ -13,10 +16,19 @@ import java.util.ResourceBundle;
 public class Controller2 implements Initializable {
 
     @FXML
-    Label results;
+    Label results, res2;
 
     @FXML
     TextArea textAn;
+
+    @FXML
+    BarChart chartSent;
+
+    @FXML
+    CategoryAxis cS;
+
+    @FXML
+    NumberAxis nS;
 
     static ArrayList<String> categoriesOfText = new ArrayList<>();
     static ArrayList<Double> valuesOfText = new ArrayList<>();
@@ -29,24 +41,12 @@ public class Controller2 implements Initializable {
         valuesOfText.clear();
         res = "";
         countRes(Controller.badWords, Controller.goodWords, Controller.cntWords);
-        results.setText("Введенный текст обладает такими характеристиками: " + res + ".");
+        results.setText("Расчёт по всем характеристикам: Введенный текст обладает такими характеристиками: " + res + ".");
         textAn.setText(Controller.text);
 
     }
 
     public void countRes(HashMap<Integer, Integer> badWords, HashMap<Integer, Integer> goodWords, int cntWords) {
-
-        for (Integer j : goodWords.keySet()){
-
-            System.out.println("GW " + j + " " + goodWords.get(j));
-
-        }
-
-        for (Integer j : badWords.keySet()){
-
-            System.out.println("BW " + j + " " + badWords.get(j));
-
-        }
 
         for (int i = 0; i < 7; ++i) {
 

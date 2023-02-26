@@ -52,12 +52,12 @@ public class Controller implements Initializable {
     NumberAxis numW;
 
     static String text; // переменная, в которой анализируемый текст
-    static Integer cntWords;
+    static Integer cntWords; // кол-во слов
 
     ArrayList <String> wordsNot = new ArrayList<>();
     ArrayList <String> wordsVery = new ArrayList<>();
 
-    static ArrayList<ArrayList<Double>> vlAllWords = new ArrayList<>();
+    static ArrayList<ArrayList<Double>> vlAllWords = new ArrayList<>(); // значения по всем  словам
 
     static HashMap<Integer, Integer> badWords = new HashMap<>(7);
     static HashMap<Integer, Integer> goodWords = new HashMap<>(7);
@@ -80,7 +80,21 @@ public class Controller implements Initializable {
 
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                //+
+
+                for(int i = 0; i < words.size(); ++i){
+
+                    System.out.print(words.get(i) + " ");
+
+                    for(int j = 0; j < 7; ++j){
+
+                        System.out.print(vlAllWords.get(i).get(j) + " ");
+
+                    }
+
+                    System.out.println();
+
+                }
+                
                 chartW.getData().clear();
                 chartW.setTitle(String.valueOf(resList.getSelectionModel().getSelectedItem()));
                 int index = resList.getSelectionModel().getSelectedIndex();
@@ -130,20 +144,23 @@ public class Controller implements Initializable {
 
     }
 
+    //определить позитивные и негативные
     public void defineBG(ArrayList<Double> values){
 
         for(int i = 0; i < values.size(); ++i){
+// ключ - идентификатор критерия, значение кол-во слов
+            if(values.get(i) <= 2.5){
 
-            if(values.get(i) <= 2.7){
-
-                if(goodWords.containsKey(i)) goodWords.put(i, goodWords.get(i) + 1);
+                if(goodWords.containsKey(i))
+                    goodWords.put(i, goodWords.get(i) + 1);
                 else goodWords.put(i, 1);
 
             }
 
-            else if(values.get(i) >= 3.6){
+            else if(values.get(i) >= 3.5){
 
-                if(badWords.containsKey(i)) badWords.put(i, badWords.get(i) + 1);
+                if(badWords.containsKey(i))
+                    badWords.put(i, badWords.get(i) + 1);
                 else badWords.put(i, 1);
 
             }
@@ -157,17 +174,17 @@ public class Controller implements Initializable {
         ArrayList<Double> valuesNew = new ArrayList<>();
 
         for(int i = 0; i < values.size(); ++i){
-            if(values.get(i) <= 2.7 || values.get(i) >= 3.6) {
+            if(values.get(i) <= 2.5 || values.get(i) >= 3.5) {
 
                 if (wordsNot.contains(word)) {
 
-                    if (values.get(i) <= 2.7) {
+                    if (values.get(i) <= 2.5) {
 
                         values.set(i, values.get(i) + 2);
 
                     }
 
-                    if (values.get(i) >= 3.6) {
+                    if (values.get(i) >= 3.5) {
 
                         values.set(i, values.get(i) - 2);
 
@@ -177,13 +194,13 @@ public class Controller implements Initializable {
 
                 if(wordsVery.contains(word)){
 
-                    if(values.get(i) <= 2.7){
+                    if(values.get(i) <= 2.5){
 
                         values.set(i, values.get(i) - 0.5);
 
                     }
 
-                    if(values.get(i) >= 3.6){
+                    if(values.get(i) >= 3.5){
 
                         values.set(i, values.get(i) + 0.5);
 
@@ -206,7 +223,7 @@ public class Controller implements Initializable {
 
         for(int i = 0; i < values.size(); ++i){
 
-            if(values.get(i) <= 2.7){
+            if(values.get(i) <= 2.5){
 
                 used = true;
 
@@ -241,7 +258,7 @@ public class Controller implements Initializable {
 
             }
 
-            else if(values.get(i) >= 3.6){
+            else if(values.get(i) >= 3.5){
 
                 used = true;
 
@@ -322,6 +339,7 @@ public class Controller implements Initializable {
         vlAllWords.clear();
         badWords.clear();
         goodWords.clear();
+        cntWords = 0;
         isAn = false;
 
         List<String> tokens = tokenization();
@@ -375,8 +393,8 @@ public class Controller implements Initializable {
                 isV = false;
             }
 
-            tokens.add(matcher.group());
-            words.add(matcher.group());
+            tokens.add(matcher.group().toLowerCase(Locale.ROOT));
+            words.add(matcher.group().toLowerCase(Locale.ROOT));
 
         }
 
@@ -390,7 +408,7 @@ public class Controller implements Initializable {
     public void showRes(ActionEvent actionEvent) throws IOException {
 
         cntWords = words.size();
-
+//анализировалось ли раньше текст
         if(!isAn) {
 
             for (int i = 0; i < cntWords; ++i) {
@@ -441,7 +459,7 @@ public class Controller implements Initializable {
 
             // проверка на символы
 
-            if (a1 == '.' || a1 == 'ь' || a1 == 'ъ' || a1 == '-') {
+            if (a1 == '.' || a1 == 'ь' || a1 == 'ъ' || a1 == '-' || a1 == ',' || a1 == '.') {
                 continue;
             }
 
@@ -462,7 +480,7 @@ public class Controller implements Initializable {
 
             }
 
-            // проверка на йотированные согласные
+            // проверка на йотированные гласные
 
             if (a1 == 'е' || a1 == 'ё' || a1 == 'ю' || a1 == 'я') {
 
@@ -493,6 +511,8 @@ public class Controller implements Initializable {
                 }
 
             }
+
+            System.out.println(a1);
 
             double hsV = Data.hs.get(a); // значение звука по весело-грустно
             double gbV = Data.gb.get(a); // значение звука по хорошо-плохо
