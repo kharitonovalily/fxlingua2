@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="fxlingua:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/fxlingua_jar</output-path>
+    <root id="archive" name="fxlingua.jar">
+      <element id="module-output" name="fxlingua" />
+    </root>
+  </artifact>
+</component>

@@ -13,8 +13,6 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Определение тональности");
         Scene sc = new Scene(root);
-        String css = this.getClass().getResource("application.css").toExternalForm();
-        sc.getStylesheets().add(css);
         primaryStage.setScene(sc);
         primaryStage.show();
     }

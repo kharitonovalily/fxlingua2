@@ -1,6 +1,5 @@
 package lingua2023;
 
-import com.sun.xml.internal.bind.v2.runtime.output.DOMOutput;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,7 +20,6 @@ import javafx.stage.Window;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.*;
 
 
@@ -54,13 +52,18 @@ public class Controller implements Initializable {
     static String text; // переменная, в которой анализируемый текст
     static Integer cntWords; // кол-во слов
 
-    ArrayList <String> wordsNot = new ArrayList<>();
-    ArrayList <String> wordsVery = new ArrayList<>();
+    static int cntK = 6; // кол-во критериев
+
+    ArrayList <String> wordsNot = new ArrayList<>(); // слова, значения которых нужно перевернуть (перед ними не)
+    ArrayList <String> wordsVery = new ArrayList<>(); // слова, значения которых усилить (перед ними очень)
 
     static ArrayList<ArrayList<Double>> vlAllWords = new ArrayList<>(); // значения по всем  словам
 
-    static HashMap<Integer, Integer> badWords = new HashMap<>(7);
-    static HashMap<Integer, Integer> goodWords = new HashMap<>(7);
+    static HashMap<Integer, Integer> badWords = new HashMap<>(5); // плохие
+    static HashMap<Integer, Integer> goodWords = new HashMap<>(5); // хорошие
+
+    static ArrayList<Double> gWValues = new ArrayList<>(); // значения по хорошим словам (с весами)
+    static ArrayList<Double> bWValues = new ArrayList<>(); // значения по плохим словам (с весами)
 
     static boolean isAn = false; // проведен ли анализ
 
@@ -72,6 +75,9 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        numW.setLowerBound(1);
+        numW.setUpperBound(5);
+
         resList.getItems().addAll(words); // добавляются все элементы из списка words
 
         resList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
@@ -80,20 +86,6 @@ public class Controller implements Initializable {
 
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-
-                for(int i = 0; i < words.size(); ++i){
-
-                    System.out.print(words.get(i) + " ");
-
-                    for(int j = 0; j < 7; ++j){
-
-                        System.out.print(vlAllWords.get(i).get(j) + " ");
-
-                    }
-
-                    System.out.println();
-
-                }
                 
                 chartW.getData().clear();
                 chartW.setTitle(String.valueOf(resList.getSelectionModel().getSelectedItem()));
@@ -104,7 +96,7 @@ public class Controller implements Initializable {
                 numW.setLabel("Значения");
 
                 XYChart.Series<String, Number> series = new XYChart.Series<>();
-                //список дддля графика
+                //список для графика
                 ObservableList <XYChart.Data<String, Number>> dataChart = FXCollections.observableArrayList();
 
                 double scale = Math.pow(10, 3);
@@ -112,22 +104,21 @@ public class Controller implements Initializable {
                 double v1 = Math.ceil(nowV.get(0) * scale) / scale;
                 double v2 = Math.ceil(nowV.get(1) * scale) / scale;
                 double v3 = Math.ceil(nowV.get(2) * scale) / scale;
-                double v4 = Math.ceil(nowV.get(3) * scale) / scale;
-                double v5 = Math.ceil(nowV.get(4) * scale) / scale;
-                double v6 = Math.ceil(nowV.get(5) * scale) / scale;
-                double v7 = Math.ceil(nowV.get(6) * scale) / scale;
+                //double v4 = Math.ceil(nowV.get(3) * scale) / scale;
+                double v5 = Math.ceil(nowV.get(3) * scale) / scale;
+                double v6 = Math.ceil(nowV.get(4) * scale) / scale;
+                double v7 = Math.ceil(nowV.get(5) * scale) / scale;
 
-                //TODO 1 биграммы правило очень и не 2 опредление тональности предложения по формуле (кол-во окрашенных делить наобщее)
-// TODO найти разницу между противополжными
                 series.getData().add(new XYChart.Data("В/Г", v1));
                 series.getData().add(new XYChart.Data("Х/П", v2));
                 series.getData().add(new XYChart.Data("Н/Г", v3));
-                series.getData().add(new XYChart.Data("Д/З", v4));
+               // series.getData().add(new XYChart.Data("Д/З", v4));
                 series.getData().add(new XYChart.Data("С/Т", v5));
                 series.getData().add(new XYChart.Data("К/О", v6));
-                series.getData().add(new XYChart.Data("Б/У", v7));
+                series.getData().add(new XYChart.Data("Б/У", v6));
 
-                chartW.getData().add(series);//отрисовка графика
+                chartW.getData().addAll(series);//отрисовка графика
+                chartW.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
 
                 ArrayList<String> categories = new ArrayList<>();
 
@@ -135,8 +126,7 @@ public class Controller implements Initializable {
 
                 String res = String.join(",", categories);
 
-                aboutWord.setText(("Слово " + String.valueOf(resList.getSelectionModel().getSelectedItem()) +
-                        " имеет такие характеристики: оно " + res + "."));
+                aboutWord.setText((String.valueOf(resList.getSelectionModel().getSelectedItem()).toUpperCase(Locale.ROOT) + ": "+ res + "."));
 
             }
 
@@ -144,12 +134,23 @@ public class Controller implements Initializable {
 
     }
 
+    static int goodFi = 0;
+    static int badFi = 0;
+
     //определить позитивные и негативные
     public void defineBG(ArrayList<Double> values){
 
+        double scale = Math.pow(10, 4);
+
         for(int i = 0; i < values.size(); ++i){
-// ключ - идентификатор критерия, значение кол-во слов
+            // ключ - идентификатор критерия, значение кол-во слов
             if(values.get(i) <= 2.5){
+
+                goodFi += 1;
+
+                if(values.get(i) == 0) break;
+
+                gWValues.add((values.get(i) - 1)/1.5);
 
                 if(goodWords.containsKey(i))
                     goodWords.put(i, goodWords.get(i) + 1);
@@ -159,6 +160,12 @@ public class Controller implements Initializable {
 
             else if(values.get(i) >= 3.5){
 
+                badFi += 1;
+
+                if(values.get(i) == 0) break;
+
+                bWValues.add(abs(values.get(i) - 5) / 1.5);
+
                 if(badWords.containsKey(i))
                     badWords.put(i, badWords.get(i) + 1);
                 else badWords.put(i, 1);
@@ -167,13 +174,18 @@ public class Controller implements Initializable {
 
         }
 
+        System.out.println("звуки " + goodFi + " " + badFi);
+
     }
+
+    // работа со значениями (не, очень)
 
     public ArrayList<Double> workWithValues(ArrayList<Double> values, String word){
 
         ArrayList<Double> valuesNew = new ArrayList<>();
 
         for(int i = 0; i < values.size(); ++i){
+
             if(values.get(i) <= 2.5 || values.get(i) >= 3.5) {
 
                 if (wordsNot.contains(word)) {
@@ -215,6 +227,13 @@ public class Controller implements Initializable {
 
     }
 
+    public double abs(double a){
+        if(a >= 0) return a;
+        else return -a;
+    }
+
+    // определение по хорошим / плохим
+
     public ArrayList<String> define (ArrayList<Double> values, String word){
 
         ArrayList<String> categories = new ArrayList<>();
@@ -226,9 +245,6 @@ public class Controller implements Initializable {
             if(values.get(i) <= 2.5){
 
                 used = true;
-
-                if(goodWords.containsKey(i)) goodWords.put(i, goodWords.get(i) + 1);
-                else goodWords.put(i, 1);
 
                 switch (i){
 
@@ -242,15 +258,12 @@ public class Controller implements Initializable {
                         categories.add("нежное");
                         break;
                     case 3:
-                        categories.add("доброе");
-                        break;
-                    case 4:
                         categories.add("светлое");
                         break;
-                    case 5:
+                    case 4:
                         categories.add("красивое");
                         break;
-                    case 6:
+                    case 5:
                         categories.add("безопасное");
                         break;
 
@@ -261,9 +274,6 @@ public class Controller implements Initializable {
             else if(values.get(i) >= 3.5){
 
                 used = true;
-
-                if(badWords.containsKey(i)) badWords.put(i, badWords.get(i) + 1);
-                else badWords.put(i, 1);
 
                 switch (i){
 
@@ -277,15 +287,12 @@ public class Controller implements Initializable {
                         categories.add("грубое");
                         break;
                     case 3:
-                        categories.add("злое");
-                        break;
-                    case 4:
                         categories.add("темное");
                         break;
-                    case 5:
+                    case 4:
                         categories.add("отталкивающее");
                         break;
-                    case 6:
+                    case 5:
                         categories.add("устрашающее");
                         break;
 
@@ -339,6 +346,8 @@ public class Controller implements Initializable {
         vlAllWords.clear();
         badWords.clear();
         goodWords.clear();
+        gWValues.clear();
+        bWValues.clear();
         cntWords = 0;
         isAn = false;
 
@@ -408,7 +417,7 @@ public class Controller implements Initializable {
     public void showRes(ActionEvent actionEvent) throws IOException {
 
         cntWords = words.size();
-//анализировалось ли раньше текст
+//анализировался ли раньше текст
         if(!isAn) {
 
             for (int i = 0; i < cntWords; ++i) {
@@ -439,7 +448,7 @@ public class Controller implements Initializable {
 
     public static ArrayList<Double> emotion (String word){
 
-        ArrayList<ArrayList<Double>> fi = new ArrayList<>(7);// массив со всеми характеристиками для всех букв слова
+        ArrayList<ArrayList<Double>> fi = new ArrayList<>(cntK);// массив со всеми характеристиками для всех букв слова
         fi.add(new ArrayList<Double>());
         fi.add(new ArrayList<Double>());
         fi.add(new ArrayList<Double>());
@@ -450,7 +459,7 @@ public class Controller implements Initializable {
 
         ArrayList<Double> pi = new ArrayList<>(); // массив с частотами
         ArrayList<Double> ki = new ArrayList<>(); // массив с коэффицентами
-        int [] f = new int[7];
+        int [] f = new int[cntK];
 
         for (int i = 0; i < word.length(); ++i) {
 
@@ -517,7 +526,7 @@ public class Controller implements Initializable {
             double hsV = Data.hs.get(a); // значение звука по весело-грустно
             double gbV = Data.gb.get(a); // значение звука по хорошо-плохо
             double ngV = Data.ng.get(a); // значение звука по нежно-грубо
-            double keV = Data.ke.get(a); // значение звука по добрый-злой
+            //double keV = Data.ke.get(a); // значение звука по добрый-злой
             double ldV = Data.ld.get(a); // значение звука по светлый-темный
             double buV = Data.bu.get(a); // значение звука по красиво-отталкивающее
             double ssV = Data.ss.get(a); // значение звука по безопасно - устрашающее
@@ -529,10 +538,10 @@ public class Controller implements Initializable {
             fi.get(0).add(hsV);
             fi.get(1).add(gbV);
             fi.get(2).add(ngV);
-            fi.get(3).add(keV);
-            fi.get(4).add(ldV);
-            fi.get(5).add(buV);
-            fi.get(6).add(ssV);
+            // fi.get(3).add(keV);
+            fi.get(3).add(ldV);
+            fi.get(4).add(buV);
+            fi.get(5).add(ssV);
 
             pi.add(pV); // добавляем частоту
 
@@ -546,7 +555,7 @@ public class Controller implements Initializable {
 
         ArrayList<Double> values = new ArrayList<>();
 
-        for(int i = 0; i < 7; ++i){
+        for(int i = 0; i < cntK; ++i){
 
             double sumK = sumKi(ki);
             double sumKF = sumKiwithFi(ki, fi.get(i));
@@ -559,6 +568,8 @@ public class Controller implements Initializable {
 
         return values;
     }
+
+    // сумма ки умноженного на фи
 
     public static double sumKiwithFi(ArrayList<Double> k, ArrayList<Double> f){
 
@@ -636,6 +647,8 @@ public class Controller implements Initializable {
 
     //TODO https://www.km.ru/zdorove/encyclopedia/tsvetoterapiya https://world-psychology.ru/cvetoterapiya-i-vliyanie-cveta-na-cheloveka/
 
+    // окошко с информацией
+
     public void info(ActionEvent actionEvent) throws IOException {
 
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -644,13 +657,12 @@ public class Controller implements Initializable {
         dialog.setContentText("Веселый - грустный (В/Г)" + System.lineSeparator()
                 + "Хороший - плохой (Х/П)" + System.lineSeparator()
                 + "Нежный - грубый (Н/Г) " + System.lineSeparator()
-                + "Добрый - злой (Д/З)" + System.lineSeparator()
                 + "Светлый - темный (С/Т)" + System.lineSeparator()
                 + "Красивый - отталкивающий (К/О)" + System.lineSeparator()
                 + "Безопасный - устрашающий (Б/У) " + System.lineSeparator()
                 + System.lineSeparator()
-                + "Для того, чтобы слово приняло значение веселого / нежного / доброго / хорошего / светлого / красивого / безопасного" +
-                " нужно, чтобы фонетический ореол был менее 2.8. Чтобы приняло противоположное значение более 3.6. В промежутке слова нейтральны."
+                + "Для того, чтобы слово приняло значение веселого / нежного / хорошего / светлого / красивого / безопасного" +
+                " нужно, чтобы фонетический ореол был менее 2.5. Чтобы приняло противоположное значение более 3.5. В промежутке слова нейтральны."
         );
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.show();

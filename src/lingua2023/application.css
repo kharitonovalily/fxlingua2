@@ -1,0 +1,70 @@
+.root{
+    -fx-background-color: #FFFEFC;
+}
+
+.label{
+    -fx-text-fill: #5A5A5A;
+}
+
+.data0.chart-bar {
+    -fx-background-color: #235F67;
+}
+
+.data1.chart-bar {
+    -fx-background-color: #235F67;
+}
+
+.data2.chart-bar {
+    -fx-background-color: #235F67;
+}
+
+.data3.chart-bar {
+    -fx-background-color: #235F67;
+}
+
+.data4.chart-bar {
+    -fx-background-color: #235F67;
+}
+
+.data5.chart-bar {
+    -fx-background-color: #235F67;
+}
+
+.button{
+    -fx-background-radius: 8;
+}
+
+.chart-legend {
+   -fx-background-color:  transparent;
+}
+
+.chart-content{
+     -fx-font-size: 18;
+}
+
+#info{
+    -fx-background-color: #9C9EAB;
+}
+
+#startB{
+    -fx-background-color: #5A5A5A;
+    -fx-text-fill: #e8e8e8;
+
+}
+
+#sendB{
+    -fx-background-color: #9C9EAB;
+}
+
+#res{
+    -fx-background-color: #5A5A5A;
+    -fx-text-fill: #e8e8e8;
+}
+
+
+.axis{
+    -fx-stroke: #3d3f43;
+    -fx-fill: #3d3f43;
+    -fx-font-size: 18;
+    -fx-tick-label-fill: #3d3f43;
+}

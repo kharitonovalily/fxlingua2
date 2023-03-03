@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lingua2023.Controller2">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lingua2023.Controller2">
    <children>
       <GridPane>
         <columnConstraints>
@@ -39,7 +39,7 @@
          <children>
             <Label alignment="CENTER" prefHeight="30.0" prefWidth="418.0" text="Результаты проведенного анализа:" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1">
               <font>
-                <Font name="Times New Roman" size="22.0" />
+                <Font name="Times New Roman" size="24.0" />
               </font></Label>
             <Label fx:id="results" prefHeight="145.0" prefWidth="400.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="5" GridPane.rowSpan="3">
                 <font>
@@ -49,7 +49,10 @@
                 <font>
                     <Font name="Times New Roman" size="18.0" />
                 </font></TextArea>
-            <Label fx:id="res2" prefHeight="95.0" prefWidth="400.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="9" GridPane.rowSpan="2" />
+            <Label fx:id="res2" prefHeight="95.0" prefWidth="400.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="6" GridPane.rowSpan="3">
+                <font>
+                    <Font name="Times New Roman" size="20.0" />
+                </font></Label>
          </children>
       </GridPane>
    </children>
